@@ -310,3 +310,99 @@ public class JpaDemoApplication {
 3. Verify that the database schema is created or updated based on your `ddl-auto` setting.
 
 ---
+**HikariCP** is a fast, lightweight JDBC connection pooling library used in Java applications. It manages database connections efficiently, allowing applications to reuse connections rather than creating and closing them repeatedly.
+
+Spring Boot integrates with HikariCP by default. When you include a database dependency and configure a `spring.datasource.url`, Spring Boot uses HikariCP as the default connection pool.
+
+---
+
+### **Why Use HikariCP?**
+- **Performance:** HikariCP is known for its high performance and low latency.
+- **Reliability:** It handles edge cases, such as connection leaks, effectively.
+- **Lightweight:** Minimal overhead compared to other connection pool implementations.
+
+---
+
+### **Hikari Pool Configuration**
+
+You can configure HikariCP in your `application.properties` or `application.yml` file.
+
+#### **Basic Configuration**
+```properties
+# Database connection
+spring.datasource.url=jdbc:postgresql://localhost:5432/mydatabase
+spring.datasource.username=myuser
+spring.datasource.password=mypassword
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# HikariCP configuration
+spring.datasource.hikari.minimum-idle=5
+spring.datasource.hikari.maximum-pool-size=10
+spring.datasource.hikari.idle-timeout=30000
+spring.datasource.hikari.max-lifetime=1800000
+spring.datasource.hikari.connection-timeout=30000
+spring.datasource.hikari.pool-name=MyHikariCP
+```
+
+---
+
+### **Key HikariCP Parameters**
+
+1. **`minimum-idle`**  
+   Minimum number of idle connections in the pool.  
+   Default: 10.
+
+2. **`maximum-pool-size`**  
+   Maximum number of connections in the pool.  
+   Default: Determined based on available cores.
+
+3. **`connection-timeout`**  
+   Maximum time (in milliseconds) a client waits for a connection from the pool before timing out.  
+   Default: 30,000 (30 seconds).
+
+4. **`idle-timeout`**  
+   Time (in milliseconds) an idle connection is retained in the pool before being closed.  
+   Default: 600,000 (10 minutes).
+
+5. **`max-lifetime`**  
+   Maximum time (in milliseconds) a connection can exist in the pool.  
+   Default: 1,800,000 (30 minutes).
+
+6. **`pool-name`**  
+   Name of the Hikari pool for logging and monitoring.  
+   Default: HikariPool-1.
+
+---
+
+### **Monitoring and Debugging**
+Enable HikariCP debugging to check its behavior:
+
+```properties
+logging.level.com.zaxxer.hikari=DEBUG
+```
+
+In the logs, you can monitor events like:
+- Pool initialization.
+- Connection acquisition and release.
+- Pool exhaustion (when all connections are in use).
+
+---
+
+### **Common Issues and Solutions**
+
+1. **Pool Exhaustion (No Available Connections)**  
+   - Increase `maximum-pool-size`.
+   - Optimize SQL queries to release connections faster.
+
+2. **Connection Leaks**  
+   - Use proper connection handling (e.g., close connections in `finally` blocks or use `try-with-resources`).
+
+3. **Driver Not Found**  
+   Ensure the correct JDBC driver is added to your `pom.xml`.
+
+4. **Slow Startup**  
+   - Lower the `minimum-idle` count to reduce initial connections.
+
+---
+
+HikariCP is a robust and default choice for Spring Boot applications, ensuring stable and high-performance database connections.
