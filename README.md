@@ -156,6 +156,90 @@ docker exec -i postgres-container psql -U myuser -d mydatabase -c "\COPY employe
   ```sql
   \q
   ```
+  
+After running the Docker container with the PostgreSQL image, you can create a new database by connecting to the PostgreSQL server inside the container. Here's a step-by-step guide:
+
+---
+
+### **Steps to Create a Database**
+
+#### **1. Connect to the PostgreSQL Container**
+
+Use the `docker exec` command to enter the container:
+
+```bash
+docker exec -it postgres-container psql -U myuser
+```
+
+Here:
+- **`-it`** opens an interactive terminal.
+- **`postgres-container`** is the name of your container.
+- **`psql -U myuser`** runs the PostgreSQL command-line client as the user `myuser`.
+
+---
+
+#### **2. Create a New Database**
+
+Once inside the `psql` shell, use the following SQL command to create a new database:
+
+```sql
+CREATE DATABASE mydatabase;
+```
+
+You should see confirmation:
+
+```
+CREATE DATABASE
+```
+
+---
+
+#### **3. Verify the Database**
+
+List all databases to confirm:
+
+```sql
+\l
+```
+
+This will display a list of databases, including the one you just created.
+
+---
+
+### **Alternate: Use a Client Tool (pgAdmin, DBeaver, etc.)**
+
+1. **Install a PostgreSQL client** like `pgAdmin`, `DBeaver`, or any SQL IDE.
+2. Connect to PostgreSQL using the following details:
+   - **Host:** `localhost`
+   - **Port:** `5432`
+   - **Username:** `myuser`
+   - **Password:** `mypassword`
+3. Once connected, use the client to create a database using its GUI or an SQL editor.
+
+---
+
+### **4. Exit the psql Shell**
+
+When done, type `\q` to exit the `psql` shell.
+
+---
+
+### **Tip: Automate Database Creation**
+
+If you want the database to be created automatically when the container starts, you can use the `POSTGRES_DB` environment variable in your `docker run` command:
+
+```bash
+docker run --name postgres-container \
+  -e POSTGRES_USER=myuser \
+  -e POSTGRES_PASSWORD=mypassword \
+  -e POSTGRES_DB=mydatabase \
+  -v /path/to/data:/var/lib/postgresql/data \
+  -p 5432:5432 -d postgres
+```
+
+This creates the database `mydatabase` on container startup.
+
+  
   To configure JPA in a Spring Boot project using a `properties` file, follow these steps:
 
 ---
